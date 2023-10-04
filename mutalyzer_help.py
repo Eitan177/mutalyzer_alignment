@@ -41,11 +41,16 @@ if submit_button:
     array1=[]
     rc_array1=[]
     c_array1=[]
+    r_array1=[]
     array2=[]
     rc_array2=[]
-    c_array2=[]    
+    c_array2=[]
+    r_array2=[]    
     
-    #breakpoint()
+    def rev(it):
+        "Reverses an interable and returns it as a string"
+        return ''.join(reversed(it))
+    
     for ch2 in alignments[0]._get_row(1)[min_val-5:max_val+5]:
         array2.append(ch2)
     for ch1 in alignments[0]._get_row(0)[min_val-5:max_val+5]:
@@ -58,12 +63,15 @@ if submit_button:
         c_array2.append(c_ch2)
     for c_ch1 in str(Seq(alignments[0]._get_row(0)[min_val-5:max_val+5]).complement()):
         c_array1.append(c_ch1)
-
+    for r_ch2 in rev(str(Seq(alignments[0]._get_row(1)[min_val-5:max_val+5]))):
+        r_array2.append(r_ch2)
+    for r_ch1 in rev(str(Seq(alignments[0]._get_row(0)[min_val-5:max_val+5]))):
+        r_array1.append(r_ch1)
 
     towrite1=pd.concat((pd.DataFrame(array1).T,pd.DataFrame(array2).T))
     towrite2=pd.concat((pd.DataFrame(rc_array1).T,pd.DataFrame(rc_array2).T))
-
-    st.write('positive strand')
+    towrite3=pd.concat((pd.DataFrame(c_array1).T,pd.DataFrame(c_array2).T))
+    st.write('mutalyzer sequence')
     st.write(towrite1)
     chart_data1 = towrite1.apply(lambda x: x.iloc[0]==x.iloc[1])
     st.bar_chart(chart_data1.T,width=towrite1.shape[1])
@@ -72,3 +80,13 @@ if submit_button:
     st.write(towrite2)
     chart_data2 = towrite2.apply(lambda x: x.iloc[0]==x.iloc[1])
     st.bar_chart(chart_data2.T,width=towrite2.shape[1])
+    st.write('complement')
+    st.write(towrite3)
+    chart_data3 = towrite3.apply(lambda x: x.iloc[0]==x.iloc[1])
+    st.bar_chart(chart_data3.T,width=towrite3.shape[1])
+
+    st.write('reverse')
+    towrite4=pd.concat((pd.DataFrame(r_array1).T,pd.DataFrame(r_array2).T))
+    st.write(towrite4)
+    chart_data4 = towrite4.apply(lambda x: x.iloc[0]==x.iloc[1])
+    st.bar_chart(chart_data4.T,width=towrite4.shape[1])
