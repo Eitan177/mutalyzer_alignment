@@ -9,6 +9,7 @@ import streamlit as st
 with st.form(key='parameters'):
     reference=st.text_input('Enter reference transcript:','NM_001429.3',help='Example: NM_001429.3')
     variant = st.text_input('Enter variant', 'NM_001429.3(EP300_v001):c.4810_4886dup',help='Example: NM_001429.3(EP300_v001):c.4810_4886dup')  
+    sequence_to_see_flank =st.number_input('flanking sequence to align', min_value=5, max_value=500, value=20, step=1)
     submit_button = st.form_submit_button(label='Submit')
 if submit_button:
 
@@ -51,21 +52,21 @@ if submit_button:
         "Reverses an interable and returns it as a string"
         return ''.join(reversed(it))
     
-    for ch2 in alignments[0]._get_row(1)[min_val-5:max_val+5]:
+    for ch2 in alignments[0]._get_row(1)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]:
         array2.append(ch2)
-    for ch1 in alignments[0]._get_row(0)[min_val-5:max_val+5]:
+    for ch1 in alignments[0]._get_row(0)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]:
         array1.append(ch1)    
-    for rc_ch2 in str(Seq(alignments[0]._get_row(1)[min_val-5:max_val+5]).reverse_complement()):
+    for rc_ch2 in str(Seq(alignments[0]._get_row(1)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]).reverse_complement()):
         rc_array2.append(rc_ch2)
-    for rc_ch1 in str(Seq(alignments[0]._get_row(0)[min_val-5:max_val+5]).reverse_complement()):
+    for rc_ch1 in str(Seq(alignments[0]._get_row(0)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]).reverse_complement()):
         rc_array1.append(rc_ch1)
-    for c_ch2 in str(Seq(alignments[0]._get_row(1)[min_val-5:max_val+5]).complement()):
+    for c_ch2 in str(Seq(alignments[0]._get_row(1)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]).complement()):
         c_array2.append(c_ch2)
-    for c_ch1 in str(Seq(alignments[0]._get_row(0)[min_val-5:max_val+5]).complement()):
+    for c_ch1 in str(Seq(alignments[0]._get_row(0)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]).complement()):
         c_array1.append(c_ch1)
-    for r_ch2 in rev(str(Seq(alignments[0]._get_row(1)[min_val-5:max_val+5]))):
+    for r_ch2 in rev(str(Seq(alignments[0]._get_row(1)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]))):
         r_array2.append(r_ch2)
-    for r_ch1 in rev(str(Seq(alignments[0]._get_row(0)[min_val-5:max_val+5]))):
+    for r_ch1 in rev(str(Seq(alignments[0]._get_row(0)[min_val-sequence_to_see_flank:max_val+sequence_to_see_flank]))):
         r_array1.append(r_ch1)
 
     towrite1=pd.concat((pd.DataFrame(array1).T,pd.DataFrame(array2).T))
