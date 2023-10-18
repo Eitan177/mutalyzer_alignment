@@ -7,22 +7,24 @@ import re
 import streamlit as st 
 # Creating sample sequences
 with st.form(key='parameters'):
-    reference=st.text_input('Enter reference transcript:','NM_001429.3',help='Example: NM_001429.3')
-    variant = st.text_input('Enter variant', 'NM_001429.3(EP300_v001):c.4810_4886dup',help='Example: NM_001429.3(EP300_v001):c.4810_4886dup')  
-    sequence_to_see_flank =st.number_input('flanking sequence to align', min_value=5, max_value=500, value=20, step=1)
+    reference=st.text_input('Enter HGVS description of reference transcript, eg (NM_...):','NM_001429.3',help='Example: NM_001429.3')
+    variant = st.text_input('Enter HGVS description of variant, eg (NM_...)', 'NM_001429.3(EP300_v001):c.4810_4886dup',help='Example: NM_001429.3(EP300_v001):c.4810_4886dup')  
+    sequence_to_see_flank =st.number_input('flanking sequence to display in alignments', min_value=5, max_value=500, value=8, step=1)
     submit_button = st.form_submit_button(label='Submit')
 if submit_button:
 
     mutalyzer_variant_seq=requests.get("https://mutalyzer.nl/api/mutate/"+variant)
     seq_var=mutalyzer_variant_seq.json()['sequence']['seq']
-
+    st.write('sequence retrieved from mutalyzer for variant')
     mutalyzer_reference_seq = requests.get('https://mutalyzer.nl/api/reference_model/?reference_id='+reference+'&siblings=false&ancestors=false&descendants=false')
     seq_ref=mutalyzer_reference_seq.json()['sequence']['seq']
-
+    st.write('sequence retrieved from mutalyzer for reference')
+ 
     # Finding similarities
     aligner = Align.PairwiseAligner()
     aligner.open_gap_score = -2
     alignments = aligner.align(seq_ref, seq_var)
+    st.write('pairwise alignment finished')
     #seqshow1= [a for a in str(alignments[0].sequences[0])] 
     #seqshow2= [a for a in str(alignments[0].sequences[1])]
     ref_a=re.search('-',alignments[0]._get_row(0))
